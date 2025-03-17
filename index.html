@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shah Photography - Booking App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Three.js library -->
+    <script src="https://unpkg.com/three@0.152.2/build/three.min.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        .date-disabled {
+            background-color: #f3f4f6;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(31, 41, 55, 0.6);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(31, 41, 55, 0.8);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+    </style>
+</head>
+<body class="text-gray-800 min-h-screen">
+    <!-- Three.js canvas container -->
+    <div id="canvas-container"></div>
+    
+    <div class="container mx-auto px-4 py-8 relative z-10">
+        <header class="mb-12 text-center">
+            <div class="flex justify-center items-center mb-2">
+                <i class="bi bi-camera text-3xl mr-2"></i>
+                <h1 class="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-800">Shah Photography</h1>
+            </div>
+            <p class="text-gray-700 max-w-lg mx-auto">Capturing your special moments with elegance and precision</p>
+        </header>
+        
+        <!-- Booking Form -->
+        <div class="max-w-md mx-auto glass-card rounded-lg p-6 mb-10">
+            <h2 class="text-2xl font-semibold mb-6 text-center">Book Your Session</h2>
+            <form id="bookingForm" class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 mb-2">Name</label>
+                    <input type="text" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-indigo-500 bg-white bg-opacity-70">
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 mb-2">Phone Number</label>
+                    <input type="tel" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-indigo-500 bg-white bg-opacity-70">
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 mb-2">Event Type</label>
+                    <select class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-indigo-500 bg-white bg-opacity-70" required>
+                        <option value="">Select Event Type</option>
+                        <option value="wedding">Wedding Photography</option>
+                        <option value="birthday">Birthday Party</option>
+                        <option value="corporate">Corporate Event</option>
+                        <option value="portrait">Portrait Session</option>
+                        <option value="family">Family Photoshoot</option>
+                        <option value="product">Product Photography</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 mb-2">Date</label>
+                    <input type="date" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-indigo-500 bg-white bg-opacity-70">
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 mb-2">Time Slot</label>
+                    <select class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-indigo-500 bg-white bg-opacity-70" required>
+                        <option value="">Select Time Slot</option>
+                        <option value="morning">Morning (9 AM - 12 PM)</option>
+                        <option value="afternoon">Afternoon (1 PM - 4 PM)</option>
+                        <option value="evening">Evening (5 PM - 8 PM)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 mb-2">Location</label>
+                    <input type="text" placeholder="Enter address or location" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-indigo-500 bg-white bg-opacity-70">
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 mb-2">Package</label>
+                    <select class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-indigo-500 bg-white bg-opacity-70">
+                        <option value="">Select Package (Optional)</option>
+                        <option value="basic">Basic (2 hours, 50 photos) - ₹5,000</option>
+                        <option value="standard">Standard (4 hours, 100 photos) - ₹10,000</option>
+                        <option value="premium">Premium (Full day, 200+ photos) - ₹20,000</option>
+                        <option value="custom">Custom Package</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 mb-2">Additional Requirements</label>
+                    <textarea class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-indigo-500 bg-white bg-opacity-70" rows="3" placeholder="Any specific requirements or details about your event..."></textarea>
+                </div>
+
+                <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-indigo-700 text-white py-3 rounded-lg hover:from-purple-700 hover:to-indigo-800 transition duration-300 font-medium flex items-center justify-center">
+                    <i class="bi bi-calendar-check mr-2"></i> Book Now
+                </button>
+            </form>
+        </div>
+
+        <!-- Our Services Section -->
+        <div class="mt-12 mb-16 text-center">
+            <h2 class="text-3xl font-bold mb-8">Our Services</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-card rounded-lg p-5 hover:shadow-lg transition duration-300">
+                    <div class="text-indigo-600 text-3xl mb-4">
+                        <i class="bi bi-heart"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Wedding Photography</h3>
+                    <p class="text-gray-600">Capturing the most beautiful moments of your special day with elegance and style.</p>
+                </div>
+                <div class="glass-card rounded-lg p-5 hover:shadow-lg transition duration-300">
+                    <div class="text-indigo-600 text-3xl mb-4">
+                        <i class="bi bi-building"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Corporate Events</h3>
+                    <p class="text-gray-600">Professional photography for your business events, conferences and corporate gatherings.</p>
+                </div>
+                <div class="glass-card rounded-lg p-5 hover:shadow-lg transition duration-300">
+                    <div class="text-indigo-600 text-3xl mb-4">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Family Portraits</h3>
+                    <p class="text-gray-600">Beautiful family portraits that capture genuine connections and emotions.</p>
+                </div>
+            </div>
+        </div>
+
+        <footer class="text-center text-gray-600 text-sm mt-12">
+            <p>© 2023 Shah Photography. All rights reserved.</p>
+            <div class="mt-4 space-x-4">
+                <a href="#" class="text-indigo-600 hover:text-indigo-800"><i class="bi bi-instagram"></i></a>
+                <a href="#" class="text-indigo-600 hover:text-indigo-800"><i class="bi bi-facebook"></i></a>
+                <a href="#" class="text-indigo-600 hover:text-indigo-800"><i class="bi bi-twitter"></i></a>
+                <a href="#" class="text-indigo-600 hover:text-indigo-800"><i class="bi bi-telephone"></i> Contact Us</a>
+            </div>
+        </footer>
+
+        <!-- Booking Confirmation Modal -->
+        <div id="confirmationModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="glass-effect p-6 rounded-lg max-w-sm w-full mx-4">
+                <div class="text-center mb-4 text-green-600">
+                    <i class="bi bi-check-circle text-5xl"></i>
+                </div>
+                <h2 class="text-xl font-bold mb-4 text-center">Booking Confirmed!</h2>
+                <p class="text-gray-600 mb-4 text-center">Thank you for booking with Shah Photography. We will contact you shortly to confirm the details.</p>
+                <div id="bookingSummary" class="bg-indigo-50 p-4 rounded-lg mb-4 text-sm">
+                    <!-- Booking details will be inserted here -->
+                </div>
+                <button onclick="closeModal()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-700 text-white py-2 rounded-lg hover:from-purple-700 hover:to-indigo-800 transition duration-300">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Three.js background setup
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x000000, 0);
+        container.appendChild(renderer.domElement);
+        
+        // Create floating particles (camera lens dust effect)
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 1000;
+        const posArray = new Float32Array(particlesCount * 3);
+        
+        for(let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 10;
+        }
+        
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.005,
+            color: 0x7c3aed // Indigo color
+        });
+        
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+        
+        // Camera position
+        camera.position.z = 3;
+        
+        // Animation
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            particlesMesh.rotation.x += 0.0003;
+            particlesMesh.rotation.y += 0.0005;
+            
+            renderer.render(scene, camera);
+        }
+        
+        animate();
+        
+        // Responsive design for Three.js
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+        
+        // Form handling
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Basic form validation
+            const inputs = this.querySelectorAll('input, select');
+            let isValid = true;
+            const bookingData = {};
+            
+            inputs.forEach(input => {
+                if (input.required && !input.value) {
+                    isValid = false;
+                    input.classList.add('border-red-500');
+                } else {
+                    input.classList.remove('border-red-500');
+                    if (input.name || input.id) {
+                        const key = input.name || input.id || input.getAttribute('placeholder');
+                        bookingData[key] = input.value;
+                    } else if (input.getAttribute('placeholder')) {
+                        bookingData[input.getAttribute('placeholder')] = input.value;
+                    } else if (input.type) {
+                        // For elements without name/id/placeholder, use type
+                        const label = input.previousElementSibling?.textContent || input.type;
+                        bookingData[label] = input.value;
+                    }
+                }
+            });
+
+            if (isValid) {
+                // Collect form data for display
+                const formElements = this.elements;
+                let summaryHTML = '<h3 class="font-bold mb-2">Booking Details:</h3>';
+                
+                // Get name
+                const nameInput = formElements[0];
+                const name = nameInput.value;
+                
+                // Get phone
+                const phoneInput = formElements[1];
+                const phone = phoneInput.value;
+                
+                // Get event type
+                const eventSelect = formElements[2];
+                const eventType = eventSelect.options[eventSelect.selectedIndex].text;
+                
+                // Get date
+                const dateInput = formElements[3];
+                const date = dateInput.value;
+                
+                // Get time slot
+                const timeSelect = formElements[4];
+                const timeSlot = timeSelect.options[timeSelect.selectedIndex].text;
+                
+                // Create summary
+                summaryHTML += `<p><strong>Name:</strong> ${name}</p>`;
+                summaryHTML += `<p><strong>Phone:</strong> ${phone}</p>`;
+                summaryHTML += `<p><strong>Event:</strong> ${eventType}</p>`;
+                summaryHTML += `<p><strong>Date:</strong> ${date}</p>`;
+                summaryHTML += `<p><strong>Time:</strong> ${timeSlot}</p>`;
+                
+                // Update summary in modal
+                document.getElementById('bookingSummary').innerHTML = summaryHTML;
+                
+                // Show confirmation modal
+                document.getElementById('confirmationModal').classList.remove('hidden');
+                
+                // Reset form
+                this.reset();
+            }
+        });
+
+        function closeModal() {
+            document.getElementById('confirmationModal').classList.add('hidden');
+        }
+
+        // Disable past dates in date picker
+        const dateInput = document.querySelector('input[type="date"]');
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.min = today;
+    </script>
+<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+	</body>
+</html>
